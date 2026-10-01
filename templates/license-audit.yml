@@ -1,0 +1,13 @@
+# License gate: fails when a push carries a GPL, AGPL or SSPL dependency.
+# Shared checker and how to record a reviewed exception:
+# https://github.com/cortex-chris/license-gate
+name: License Audit
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  license-audit:
+    uses: cortex-chris/license-gate/.github/workflows/audit.yml@main

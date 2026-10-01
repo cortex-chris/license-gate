@@ -1,0 +1,51 @@
+name: License audit (shared)
+
+# Called from each repository's .github/workflows/license-audit.yml:
+#
+#   jobs:
+#     license-audit:
+#       uses: cortex-chris/license-gate/.github/workflows/audit.yml@main
+#
+# Fails when the repository declares a runtime dependency under a strong or
+# network copyleft license (GPL, AGPL, SSPL) that it has not recorded as a
+# reviewed exception in .github/license-allowlist.json.
+
+on:
+  workflow_call:
+    inputs:
+      strict:
+        description: Also fail on dependencies whose license could not be determined
+        type: boolean
+        default: false
+        required: false
+
+jobs:
+  license-audit:
+    name: License audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the repository being audited
+        uses: actions/checkout@v4
+
+      - name: Check out the checker
+        uses: actions/checkout@v4
+        with:
+          repository: cortex-chris/license-gate
+          ref: main
+          path: .license-gate
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Audit dependency licenses
+        run: |
+          python .license-gate/license_audit.py --root "$GITHUB_WORKSPACE" \
+            --report license-report.md --json license-report.json \
+            ${{ inputs.strict && '--strict' || '' }}
+
+      - name: Publish the report to the job summary
+        if: always()
+        run: cat license-report.md >> "$GITHUB_STEP_SUMMARY"

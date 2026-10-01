@@ -1,0 +1,12 @@
+{
+  "_README": "Exceptions built into license-gate, used when a repository has no allowlist of its own (.github/license-allowlist.json). 'accepted' = reviewed and fine. 'acknowledged_copyleft' = strong/network copyleft that is tracked for removal: listed here it is reported but does not fail the check.",
+  "accepted": [
+    {
+      "name": "certifi",
+      "ecosystem": "pypi",
+      "license": "MPL-2.0",
+      "reason": "MPL-2.0 is file-level (weak) copyleft. certifi is Mozilla's CA bundle, used unmodified as a dependency of requests/httpx; only changes to certifi's own files would carry obligations."
+    }
+  ],
+  "acknowledged_copyleft": []
+}
