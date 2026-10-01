@@ -1,1 +1,11 @@
-dispatch
+#!/bin/sh
+# license-gate global hook: hand over to this repository's own hook of the same
+# name, so Git LFS, pre-commit and the rest keep working under a global
+# core.hooksPath. Installed by install.sh; every hook name links here except
+# pre-push, which runs the license gate first.
+name=$(basename "$0")
+own_dir="$(git rev-parse --git-common-dir 2>/dev/null)/hooks"
+here=$(cd "$(dirname "$0")" && pwd -P)
+[ "$(cd "$own_dir" 2>/dev/null && pwd -P)" = "$here" ] && exit 0   # never call ourselves
+[ -x "$own_dir/$name" ] && exec "$own_dir/$name" "$@"
+exit 0
